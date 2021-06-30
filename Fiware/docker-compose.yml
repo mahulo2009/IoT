@@ -177,4 +177,4 @@ volumes:
  #todo crate sysctl -w vm.max_map_count=262144
  #todo grafana plugin (working)
  #todo volume for grafana (not loosing cofiguration)
- 
+ #todo use curlcpp para crear todo lo necesario (servicioes...)
