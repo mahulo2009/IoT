@@ -3,25 +3,17 @@ services:
 
   # gcs
   gcs:
-    image: centos7/gcs:halley
+    image: mhuertas/instalacionconectada:gcs 
     hostname: gcs
-    container_name: halley
+    container_name: gcs
     depends_on:
       - db    
-    networks:
-      - default
-
-  # gcs
-  gcs8:
-    image: centos8/gcs:halley_testing
-    hostname: gcs8
-    container_name: halley8
     networks:
       - default
       
   # Database
   db:
-    image: centos8/mysql:halley
+    image: mhuertas/instalacionconectada:mysql 
     hostname: db
     container_name: db
     networks:
@@ -30,34 +22,30 @@ services:
        - 3306:3306
     volumes:
       - data:/var/lib/mysql     
-
     environment:
       - MYSQL_ROOT_PASSWORD=passroot
 
-
-
   # Orion is the context broker
   orion:
-    image: fiware/orion:${ORION_VERSION}
+    image: mhuertas/instalacionconectada:orion 
     hostname: orion
-    container_name: fiware-orion
+    container_name: orion
     depends_on:
       - mongo-db
     networks:
       - default
     ports:
       - "${ORION_PORT}:${ORION_PORT}" # localhost:1026
-    command: -dbhost mongo-db -logLevel DEBUG -noCache
+    command: -dbhost mongo -logLevel DEBUG -noCache
     healthcheck:
       test: curl --fail -s http://orion:${ORION_PORT}/version || exit 1
       interval: 5s
 
-
   # Databases
   mongo-db:
-    image: mongo:${MONGO_DB_VERSION}
-    hostname: mongo-db
-    container_name: db-mongo
+    image: mhuertas/instalacionconectada:mongo 
+    hostname: mongo
+    container_name: mongo
     expose:
       - "${MONGO_DB_PORT}"
     ports:
@@ -73,7 +61,7 @@ services:
       interval: 5s
       
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: mhuertas/instalacionconectada:mosquitto 
     hostname: mosquitto
     container_name: mosquitto
     expose:
@@ -89,9 +77,9 @@ services:
 
   # Databases
   iot-agent:
-    image: fiware/iotagent-ul:${ULTRALIGHT_VERSION}
+    image: mhuertas/instalacionconectada:iot-agent 
     hostname: iot-agent
-    container_name: fiware-iot-agent
+    container_name: iot-agent
     depends_on:
       - mongo-db
     networks:
@@ -123,7 +111,7 @@ services:
       interval: 5s   
 
   quantumleap:
-    image: smartsdk/quantumleap
+    image: mhuertas/instalacionconectada:quantumleap
     ports:
       - "8668:8668"
     depends_on:
@@ -134,7 +122,7 @@ services:
       - CRATE_HOST=crate
 
   crate:
-    image: crate:4.1.8
+    image: mhuertas/instalacionconectada:crate
     hostname: crate
     ports:
       # Admin UI
@@ -149,7 +137,7 @@ services:
       - cratedata:/data
 
   grafana:
-    image: grafana/grafana
+    image: mhuertas/instalacionconectada:grafana
     ports:
       - "3000:3000"
     environment:
