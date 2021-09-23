@@ -1,18 +1,10 @@
 package es.gtc.iot.kurento.client;
 
-import org.kurento.client.Composite;
-import org.kurento.client.Dispatcher;
-import org.kurento.client.DispatcherOneToMany;
-import org.kurento.client.FaceOverlayFilter;
-import org.kurento.client.GStreamerFilter;
-import org.kurento.client.HttpPostEndpoint;
 import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
+import org.kurento.client.MediaProfileSpecType;
 import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.RecorderEndpoint;
-import org.kurento.client.RtpEndpoint;
-import org.kurento.client.WebRtcEndpoint;
-import org.kurento.client.ZBarFilter;
 
 /**
  * Hello world!
@@ -20,25 +12,41 @@ import org.kurento.client.ZBarFilter;
  */
 public class App 
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws InterruptedException
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "Hello World!!!" );
 
-        KurentoClient kurento = KurentoClient.create("ws://localhost:8888/kurento");
-
+        KurentoClient kurento = KurentoClient.create();
         MediaPipeline pipeline = kurento.createMediaPipeline();
+        String url = "http://viewer:1guest@netcamext.grantecan.net/mjpeg.cgi?0";
+        PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline, url).useEncodedMedia().build();
+ 
+        RecorderEndpoint recorderEndpoint = 
+            new RecorderEndpoint.Builder(pipeline, "file:///tmp/recording.webm").withMediaProfile(MediaProfileSpecType.JPEG_VIDEO_ONLY).build();
 
-        PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline, "http://www.gtc.iac.es/multimedia/netcam/camaraExt.jpg").useEncodedMedia().build();
+        player.connect(recorderEndpoint);
+       
+        player.play();
 
+        Thread.sleep(5000);
+
+        recorderEndpoint.record();
+
+        System.out.println( "END!!!" );
+    }
+
+
+    /*
+
+    
         HttpPostEndpoint httpEndpoint = new HttpPostEndpoint.Builder(pipeline).build();
         player.connect(httpEndpoint);
 
         RecorderEndpoint recorderEndpoint = new RecorderEndpoint.Builder(pipeline, "file:///tmp/recording.webm").build();
+        recorderEndpoint.record();
 
         System.out.println( "Hello World READY!" );
-    }
 
-        /*
         // Protocols and codecs
         WebRtcEndpoint webRtcEndpoint = new WebRtcEndpoint.Builder(pipeline).build();
 

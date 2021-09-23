@@ -56,7 +56,9 @@ RUN cd ~/is-workspace && colcon build
 
 ADD config.yaml /root/is-workspace
 
-CMD ["/bin/bash", "-c", "source /root/is-workspace/install/setup.bash;integration-service /root/is-workspace/config.yaml"]
+
+
+#CMD ["/bin/bash", "-c", "source /root/is-workspace/install/setup.bash;integration-service /root/is-workspace/config.yaml"]
 
 
 
